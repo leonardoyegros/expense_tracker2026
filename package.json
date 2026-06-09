@@ -1,0 +1,12 @@
+{
+  "name": "finanzas-leo",
+  "version": "0.1.0",
+  "description": "Web app de finanzas personales (PYG): gastos, deudas, bola de nieve, viáticos.",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "serve": "python3 -m http.server 8080",
+    "test": "node --test"
+  },
+  "license": "UNLICENSED"
+}
