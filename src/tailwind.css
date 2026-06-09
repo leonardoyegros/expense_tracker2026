@@ -1,0 +1,260 @@
+/* src/tailwind.css — fuente Tailwind v4. Compilar con: npm run build:css
+ * Diseño: neón tecnológico + glassmorphism estilo iOS (oscuro siempre).
+ */
+@import "tailwindcss";
+
+@theme {
+  --color-neon-cyan: #22d3ee;
+  --color-neon-violet: #a78bfa;
+  --color-neon-pink: #f472b6;
+  --color-neon-green: #34d399;
+  --color-neon-amber: #fbbf24;
+  --color-neon-rose: #fb7185;
+  --color-ink: #eaf2fb;
+  --color-muted: #8b9bb4;
+  --color-abyss: #04060d;
+}
+
+/* ============================== base ============================== */
+@layer base {
+  * { -webkit-tap-highlight-color: transparent; }
+
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    @apply text-ink antialiased;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.45;
+    background-color: var(--color-abyss);
+    background-image:
+      radial-gradient(60% 38% at 12% 0%, rgba(34, 211, 238, 0.16), transparent 62%),
+      radial-gradient(48% 34% at 100% 18%, rgba(167, 139, 250, 0.15), transparent 62%),
+      radial-gradient(50% 36% at 45% 102%, rgba(244, 114, 182, 0.10), transparent 62%);
+    background-attachment: fixed;
+  }
+
+  #app { @apply mx-auto max-w-[560px] min-h-screen; }
+}
+
+/* ============================== componentes ============================== */
+@layer components {
+
+  /* --- Topbar (glass) --- */
+  .topbar {
+    @apply sticky top-0 z-10 flex items-baseline justify-between gap-3 border-b border-white/10 px-[18px] py-4;
+    padding-top: calc(16px + env(safe-area-inset-top));
+    background: rgba(5, 8, 16, 0.55);
+    backdrop-filter: blur(26px) saturate(180%);
+    -webkit-backdrop-filter: blur(26px) saturate(180%);
+  }
+  .topbar h1 {
+    @apply m-0 text-[19px] font-extrabold tracking-tight;
+    background: linear-gradient(90deg, var(--color-neon-cyan), var(--color-neon-violet), var(--color-neon-pink));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .topbar-date { @apply text-[12px] text-muted; }
+
+  .content { @apply px-3.5 pt-3.5 pb-[110px]; }
+
+  /* --- Tarjetas glass --- */
+  .card {
+    @apply relative mb-3.5 rounded-3xl border border-white/10 p-4;
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.085), rgba(255, 255, 255, 0.028));
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10), 0 10px 36px rgba(0, 0, 0, 0.40);
+  }
+  .card.highlight {
+    border-color: rgba(34, 211, 238, 0.45);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      0 0 0 1px rgba(34, 211, 238, 0.12),
+      0 0 28px rgba(34, 211, 238, 0.18),
+      0 10px 36px rgba(0, 0, 0, 0.40);
+  }
+  .card h2 { @apply m-0 mb-3 text-[12.5px] font-bold uppercase tracking-[0.12em] text-neon-cyan/90; }
+
+  .hint { @apply text-[11px] font-normal normal-case tracking-normal text-muted; }
+  .note { @apply mt-2.5 mb-0 text-[13px] text-muted; }
+  .empty { @apply py-2.5 text-center text-sm text-muted; }
+
+  /* --- Stats / números neón --- */
+  .stat-row { @apply flex gap-3; }
+  .stat { @apply flex-1 text-center; }
+  .stat-num {
+    @apply text-[22px] font-extrabold tracking-tight text-[#eafdff];
+    text-shadow: 0 0 16px rgba(34, 211, 238, 0.45);
+  }
+  .stat-lbl { @apply text-[10.5px] uppercase tracking-[0.08em] text-muted; }
+  .big-num {
+    @apply my-1 text-[28px] font-extrabold tracking-tight text-[#eafdff];
+    text-shadow: 0 0 20px rgba(34, 211, 238, 0.5);
+  }
+  .big-num.neg {
+    @apply text-neon-rose;
+    text-shadow: 0 0 20px rgba(251, 113, 133, 0.5);
+  }
+
+  /* --- Formularios --- */
+  label { @apply mb-3 block text-[13px] text-muted; }
+  label.check { @apply flex items-center gap-2.5 text-[14.5px] text-ink; }
+  label.check input { @apply m-0 h-[18px] w-[18px] accent-cyan-400; }
+
+  input[type="text"], input[type="number"], select {
+    @apply mt-1.5 w-full rounded-xl border border-white/10 bg-white/[0.05] px-3 py-[11px] text-base text-ink;
+    backdrop-filter: blur(8px);
+  }
+  input[type="text"]:focus, input[type="number"]:focus, select:focus {
+    @apply outline-none border-cyan-400/60;
+    box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.15), 0 0 18px rgba(34, 211, 238, 0.20);
+  }
+  input::placeholder { color: rgba(139, 155, 180, 0.6); }
+  select option { background: #0b1220; color: var(--color-ink); }
+  input[type="file"] { @apply py-2 text-[13px] text-muted; }
+
+  .seg { @apply mb-3 flex gap-1.5; }
+  .seg-btn {
+    @apply flex-1 cursor-pointer rounded-xl border border-white/10 bg-white/[0.04] py-2.5 text-sm text-muted;
+  }
+  .seg-btn.active {
+    @apply border-cyan-400/60 font-semibold text-[#031318];
+    background: linear-gradient(135deg, var(--color-neon-cyan), #67e8f9);
+    box-shadow: 0 0 16px rgba(34, 211, 238, 0.45);
+  }
+
+  .btn-primary {
+    @apply w-full cursor-pointer rounded-2xl border-0 py-[13px] text-base font-bold text-[#06121f];
+    background: linear-gradient(110deg, var(--color-neon-cyan), var(--color-neon-violet));
+    box-shadow: 0 0 22px rgba(34, 211, 238, 0.35), 0 4px 18px rgba(167, 139, 250, 0.30);
+  }
+  .btn-primary:active { filter: brightness(0.85); }
+
+  .btn-small {
+    @apply mt-2 inline-block w-auto cursor-pointer rounded-[10px] border border-cyan-400/30 bg-cyan-400/10 px-3 py-2 text-[13px] font-semibold text-neon-cyan;
+  }
+  .btn-primary.btn-small { @apply w-auto text-[#06121f]; }
+  .btn-small.glow { box-shadow: 0 0 14px rgba(34, 211, 238, 0.35); }
+  .danger-btn { @apply border-rose-400/30 bg-rose-400/10 text-neon-rose; }
+
+  /* --- Alertas --- */
+  .alert { @apply mt-1 rounded-xl px-3 py-[11px] text-[13.5px]; }
+  .alert a { @apply font-bold text-inherit; }
+  .alert.warn {
+    @apply border border-amber-400/35 bg-amber-400/10 text-neon-amber;
+    box-shadow: 0 0 14px rgba(251, 191, 36, 0.12);
+  }
+  .alert.ok-soft { @apply border border-emerald-400/35 bg-emerald-400/10 text-neon-green; }
+  .alert.danger-glow {
+    @apply mb-3.5 mt-0 border border-rose-400/45 bg-rose-400/10 text-[#ffd7de];
+    backdrop-filter: blur(16px);
+    box-shadow: 0 0 22px rgba(251, 113, 133, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  /* --- Filas --- */
+  .row { @apply flex items-center justify-between border-b border-white/[0.07] py-2.5 last:border-b-0; }
+  .row-main { @apply flex-1; }
+  .row-sub { @apply mt-0.5 text-[12.5px] text-muted; }
+  .link-del { @apply cursor-pointer border-0 bg-transparent px-2 py-1 text-base text-muted; }
+
+  /* --- Tags neón --- */
+  .tag {
+    @apply inline-block rounded-full px-2 py-0.5 align-middle text-[10.5px] font-bold uppercase tracking-[0.03em];
+  }
+  .tag-viatico { @apply border border-violet-400/40 bg-violet-400/15 text-neon-violet; }
+  .tag-ok { @apply border border-emerald-400/40 bg-emerald-400/15 text-neon-green; }
+  .tag-warn { @apply border border-amber-400/40 bg-amber-400/15 text-neon-amber; }
+  .tag-danger {
+    @apply border border-rose-400/45 bg-rose-400/15 text-neon-rose;
+    box-shadow: 0 0 10px rgba(251, 113, 133, 0.25);
+  }
+
+  /* --- Deudas --- */
+  .debt-head { @apply flex items-start justify-between gap-2.5; }
+  .debt-bal {
+    @apply whitespace-nowrap text-lg font-extrabold text-[#eafdff];
+    text-shadow: 0 0 14px rgba(34, 211, 238, 0.35);
+  }
+  .debt-foot { @apply mt-2.5 flex items-center justify-between text-[13px] text-muted; }
+  .debt-actions { @apply mt-1 flex flex-wrap gap-2; }
+  .card.debt.paid { @apply opacity-50; }
+
+  /* --- Ciclos de tarjeta --- */
+  .cycle-row { @apply mt-2.5 flex flex-wrap gap-1.5; }
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full border border-white/12 bg-white/[0.06] px-2.5 py-1 text-[12px] text-ink;
+    backdrop-filter: blur(8px);
+  }
+  .chip b { @apply font-bold text-neon-cyan; }
+  .chip-warn { @apply border-amber-400/45 bg-amber-400/10; }
+  .chip-warn b { @apply text-neon-amber; }
+  .chip-danger {
+    @apply border-rose-400/55 bg-rose-400/10;
+    box-shadow: 0 0 12px rgba(251, 113, 133, 0.30);
+  }
+  .chip-danger b { @apply text-neon-rose; }
+  .chip-cyan { @apply border-cyan-400/45 bg-cyan-400/10; }
+
+  .due-count {
+    @apply min-w-[44px] rounded-xl border px-2 py-1 text-center text-[14px] font-extrabold;
+  }
+  .due-count.ok { @apply border-emerald-400/40 bg-emerald-400/10 text-neon-green; }
+  .due-count.warn { @apply border-amber-400/45 bg-amber-400/10 text-neon-amber; }
+  .due-count.danger {
+    @apply border-rose-400/55 bg-rose-400/10 text-neon-rose;
+    box-shadow: 0 0 14px rgba(251, 113, 133, 0.35);
+  }
+
+  /* --- Barras de utilización --- */
+  .util { @apply mt-2.5; }
+  .util-bar { @apply h-2 overflow-hidden rounded-md bg-white/[0.08]; }
+  .util-fill { @apply block h-full rounded-md; }
+  .util-fill.ok { background: linear-gradient(90deg, #10b981, var(--color-neon-green)); box-shadow: 0 0 10px rgba(52, 211, 153, 0.6); }
+  .util-fill.warn { background: linear-gradient(90deg, #f59e0b, var(--color-neon-amber)); box-shadow: 0 0 10px rgba(251, 191, 36, 0.6); }
+  .util-fill.danger { background: linear-gradient(90deg, #e11d48, var(--color-neon-rose)); box-shadow: 0 0 12px rgba(251, 113, 133, 0.7); }
+  .util-lbl { @apply mt-1.5 text-xs text-muted; }
+
+  /* --- Categorías --- */
+  .cat-row { @apply mb-3; }
+  .cat-lbl { @apply mb-1.5 flex justify-between text-[13px]; }
+  .cat-lbl span { @apply text-muted; }
+
+  /* --- Tablas --- */
+  .tbl { @apply w-full border-collapse text-[13.5px]; }
+  .tbl th, .tbl td { @apply border-b border-white/[0.08] px-1.5 py-2 text-left; }
+  .tbl th { @apply text-xs font-semibold uppercase tracking-[0.06em] text-muted; }
+  .tbl td:nth-child(n+2), .tbl th:nth-child(n+2) { @apply text-right; }
+  .tbl.small { @apply whitespace-nowrap text-xs; }
+  .tbl .total td { @apply border-b-0 border-t-2 border-t-cyan-400/50 font-extrabold; }
+  .tbl .ok { @apply font-bold text-neon-green; }
+  .breakdown td:first-child { @apply text-muted; }
+  .tbl-scroll { @apply overflow-x-auto; -webkit-overflow-scrolling: touch; }
+
+  .extra-row { @apply flex items-center gap-2; }
+  .extra-row input { @apply m-0 flex-1; }
+  .extra-row .btn-small { @apply m-0; }
+
+  .thumb { @apply h-[46px] w-[46px] rounded-lg border border-white/15 object-cover; }
+  .task { @apply mb-3 items-start; }
+  .task span.done { @apply text-muted line-through; }
+
+  .hidden { display: none !important; }
+
+  /* --- Bottom nav: píldora flotante glass --- */
+  .bottomnav {
+    @apply fixed inset-x-3 z-20 mx-auto flex h-16 max-w-[536px] rounded-[28px] border border-white/12;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    background: rgba(8, 12, 22, 0.68);
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    box-shadow: 0 12px 44px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.10);
+  }
+  .nav-btn {
+    @apply flex flex-1 cursor-pointer flex-col items-center justify-center gap-0.5 border-0 bg-transparent py-1.5 text-[10px] text-muted;
+  }
+  .nav-btn .nav-icon { @apply text-[19px] leading-none; filter: grayscale(60%) opacity(70%); }
+  .nav-btn.active { @apply font-bold text-neon-cyan; text-shadow: 0 0 12px rgba(34, 211, 238, 0.6); }
+  .nav-btn.active .nav-icon { filter: none; }
+}

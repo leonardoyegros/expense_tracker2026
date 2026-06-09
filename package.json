@@ -6,7 +6,13 @@
   "scripts": {
     "start": "node server.js",
     "serve": "python3 -m http.server 8080",
+    "build:css": "tailwindcss -i src/tailwind.css -o css/styles.css --minify",
+    "watch:css": "tailwindcss -i src/tailwind.css -o css/styles.css --watch",
     "test": "node --test"
   },
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.0",
+    "tailwindcss": "^4.3.0"
+  }
 }

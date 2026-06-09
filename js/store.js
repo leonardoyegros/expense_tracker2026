@@ -8,10 +8,23 @@
 
   function deepClone(o) { return JSON.parse(JSON.stringify(o)); }
 
+  /** Completa campos que versiones anteriores del estado no tenían. */
+  function migrate(st) {
+    if (!st.cardCycles) st.cardCycles = [];
+    st.debts.forEach(function (d) {
+      if (d.kind === 'credit_card' && d.closeDay === undefined) {
+        var seed = root.SeedData.debts.find(function (x) { return x.id === d.id; });
+        d.closeDay = seed ? seed.closeDay : null;
+        d.dueDay = seed ? seed.dueDay : null;
+      }
+    });
+    return st;
+  }
+
   function load() {
     try {
       var raw = (typeof localStorage !== 'undefined') ? localStorage.getItem(KEY) : null;
-      if (raw) return JSON.parse(raw);
+      if (raw) return migrate(JSON.parse(raw));
     } catch (e) { /* ignore */ }
     return deepClone(root.SeedData);
   }
@@ -73,6 +86,30 @@
   }
 
   function setExtraPayment(v) { state.extraPayment = v; save(); }
+
+  function updateDebtCycle(id, closeDay, dueDay) {
+    var d = state.debts.find(function (x) { return x.id === id; });
+    if (d) { d.closeDay = closeDay; d.dueDay = dueDay; save(); }
+  }
+
+  /** Registra el extracto del ciclo vigente de una tarjeta. */
+  function addCardStatement(stmt) {
+    stmt.id = uid();
+    // Un extracto por tarjeta y vencimiento: reemplaza si ya existía.
+    state.cardCycles = state.cardCycles.filter(function (c) {
+      return !(c.debtId === stmt.debtId && c.dueDate === stmt.dueDate);
+    });
+    state.cardCycles.unshift(stmt);
+    save();
+  }
+
+  /** Extracto pendiente (vencimiento >= hoy) de una tarjeta, si hay. */
+  function pendingStatement(debtId) {
+    var today = new Date().toISOString().slice(0, 10);
+    return state.cardCycles.find(function (c) {
+      return c.debtId === debtId && c.dueDate >= today;
+    }) || null;
+  }
 
   function updateViatico(id, patch) {
     var v = state.viaticos.find(function (x) { return x.id === id; });
@@ -152,6 +189,9 @@
     deleteTransaction: deleteTransaction,
     updateDebtBalance: updateDebtBalance,
     setExtraPayment: setExtraPayment,
+    updateDebtCycle: updateDebtCycle,
+    addCardStatement: addCardStatement,
+    pendingStatement: pendingStatement,
     updateViatico: updateViatico,
     toggleTask: toggleTask,
     addWeeklyReview: addWeeklyReview,

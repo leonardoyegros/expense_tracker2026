@@ -88,6 +88,49 @@ test('viatico: interés crece con los días sin rendir', () => {
   assert.strictEqual(c30, 16500);
 });
 
+test('ciclo: antes del cierre, con vencimiento previo ya pasado (Itaú, 9-jun)', () => {
+  // Cierre 17, vence 5 del mes siguiente. El 9/6: vto del 5/6 ya pasó,
+  // próximo cierre 17/6 y próximo vencimiento 5/7.
+  const c = Fin.nextCardDates(new Date('2026-06-09T12:00:00'), 17, 5);
+  assert.strictEqual(c.close.getDate(), 17);
+  assert.strictEqual(c.close.getMonth(), 5); // junio
+  assert.strictEqual(c.due.getDate(), 5);
+  assert.strictEqual(c.due.getMonth(), 6); // julio
+  assert.strictEqual(c.daysToClose, 8);
+  assert.strictEqual(c.daysToDue, 26);
+});
+
+test('ciclo: después del cierre, vencimiento pendiente del extracto cerrado', () => {
+  // El 20/6 ya cerró el 17/6: vence 5/7, próximo cierre 17/7.
+  const c = Fin.nextCardDates(new Date('2026-06-20T12:00:00'), 17, 5);
+  assert.strictEqual(c.close.getMonth(), 6); // julio
+  assert.strictEqual(c.due.getDate(), 5);
+  assert.strictEqual(c.due.getMonth(), 6); // julio
+  assert.strictEqual(c.daysToDue, 15);
+});
+
+test('ciclo: a días del vencimiento dispara el contador corto', () => {
+  // El 3/7, el extracto del 17/6 vence el 5/7 -> faltan 2 días.
+  const c = Fin.nextCardDates(new Date('2026-07-03T12:00:00'), 17, 5);
+  assert.strictEqual(c.daysToDue, 2);
+});
+
+test('ciclo: el mismo día del vencimiento cuenta 0 días (no salta al siguiente)', () => {
+  const c = Fin.nextCardDates(new Date('2026-07-05T12:00:00'), 17, 5);
+  assert.strictEqual(c.daysToDue, 0);
+});
+
+test('ciclo: sin configuración devuelve null', () => {
+  assert.strictEqual(Fin.nextCardDates(new Date(), null, null), null);
+  assert.strictEqual(Fin.nextCardDates(new Date(), 17, null), null);
+});
+
+test('ciclo: cruce de año (cierre 17/dic vence 5/ene)', () => {
+  const c = Fin.nextCardDates(new Date('2026-12-20T12:00:00'), 17, 5);
+  assert.strictEqual(c.due.getMonth(), 0); // enero
+  assert.strictEqual(c.due.getFullYear(), 2027);
+});
+
 test('utilization: Itaú está sobre 80%', () => {
   const itau = seed.debts.find((d) => d.id === 'itau');
   const u = Fin.utilization(itau.balance, itau.creditLimit);

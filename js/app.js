@@ -19,6 +19,33 @@
 
   function hoyISO() { return new Date().toISOString().slice(0, 10); }
   function mesActual() { return F.claveMes(new Date()); }
+
+  /** Ciclos de las tarjetas activas con fechas próximas, orden por vencimiento. */
+  function cardCycles() {
+    return S.activeDebts()
+      .filter(function (d) { return d.kind === 'credit_card'; })
+      .map(function (d) {
+        return { debt: d, cycle: Fin.nextCardDates(new Date(), d.closeDay, d.dueDay) };
+      })
+      .sort(function (a, b) {
+        var x = a.cycle ? a.cycle.daysToDue : 9999;
+        var y = b.cycle ? b.cycle.daysToDue : 9999;
+        return x - y;
+      });
+  }
+
+  /** Banner de vencimientos dentro de los próximos 5 días. */
+  function dueBanner() {
+    var urgentes = cardCycles().filter(function (c) { return c.cycle && c.cycle.daysToDue <= 5; });
+    if (!urgentes.length) return '';
+    return urgentes.map(function (c) {
+      var stmt = S.pendingStatement(c.debt.id);
+      var monto = stmt ? ' · ' + F.pyg(stmt.totalDue) : '';
+      var dias = c.cycle.daysToDue === 0 ? '¡HOY!' : 'en ' + c.cycle.daysToDue + ' día' + (c.cycle.daysToDue > 1 ? 's' : '');
+      return '<div class="alert danger-glow">💳 <b>' + esc(c.debt.name) + '</b> vence el ' +
+        F.fecha(c.cycle.due) + ' (' + dias + ')' + monto + '</div>';
+    }).join('');
+  }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
     return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 
@@ -69,7 +96,7 @@
       return '<option value="' + d.id + '">' + esc(d.name) + '</option>';
     }).join('');
 
-    return '' +
+    return dueBanner() +
       '<section class="card stat-row">' +
         '<div class="stat"><div class="stat-num">' + F.gs(gastadoHoy) + '</div><div class="stat-lbl">gastado hoy</div></div>' +
         '<div class="stat"><div class="stat-num">' + F.gs(variablesMes) + '</div><div class="stat-lbl">variables del mes</div></div>' +
@@ -208,21 +235,58 @@
       var upd = d.needsBalanceUpdate ? '<span class="tag tag-warn">saldo a actualizar</span>' : '';
       var liquidar = (d.id === 'sudameris' && d.balance > 0) ?
         '<button class="btn-small" data-liquidar="' + d.id + '">Liquidar y retirar</button>' : '';
+
+      // Ciclo de tarjeta: cierre / vencimiento / extracto
+      var cycleHtml = '';
+      var cycleBtns = '';
+      if (d.kind === 'credit_card' && d.balance > 0) {
+        var cyc = Fin.nextCardDates(new Date(), d.closeDay, d.dueDay);
+        if (cyc) {
+          var dueCls = cyc.daysToDue <= 5 ? 'chip-danger' : (cyc.daysToDue <= 10 ? 'chip-warn' : '');
+          var stmt = S.pendingStatement(d.id);
+          cycleHtml = '<div class="cycle-row">' +
+            '<span class="chip">🔒 cierra ' + F.fecha(cyc.close) + ' <b>· ' + cyc.daysToClose + 'd</b></span>' +
+            '<span class="chip ' + dueCls + '">⏰ vence ' + F.fecha(cyc.due) + ' <b>· ' + cyc.daysToDue + 'd</b></span>' +
+            (stmt ? '<span class="chip chip-cyan">🧾 a pagar ' + F.gs(stmt.totalDue) + '</span>' : '') +
+            '</div>';
+          cycleBtns = '<button class="btn-small" data-stmt="' + d.id + '">Registrar extracto</button>' +
+            '<button class="btn-small" data-cycle="' + d.id + '">Editar ciclo</button>';
+        } else {
+          cycleBtns = '<button class="btn-small glow" data-cycle="' + d.id + '">Configurar ciclo ⚡</button>';
+        }
+      }
+
       return '<div class="card debt' + (d.balance <= 0 ? ' paid' : '') + '">' +
         '<div class="debt-head"><div><strong>#' + d.snowballOrder + ' ' + esc(d.name) + '</strong> ' + upd +
         '<div class="row-sub">' + (d.kind === 'loan' ? 'Préstamo' : 'Tarjeta') + ' · TAN ' +
         (d.rateTAN * 100).toFixed(2).replace('.', ',') + '%</div></div>' +
         '<div class="debt-bal">' + F.gs(d.balance) + '</div></div>' +
-        utilHtml +
+        utilHtml + cycleHtml +
         '<div class="debt-foot"><span>mín. ' + F.gs(d.minPayment) + '</span>' + payoff + '</div>' +
-        '<div class="debt-actions"><button class="btn-small" data-edit="' + d.id + '">Actualizar saldo</button>' + liquidar + '</div>' +
+        '<div class="debt-actions"><button class="btn-small" data-edit="' + d.id + '">Actualizar saldo</button>' +
+        cycleBtns + liquidar + '</div>' +
         '</div>';
     }).join('');
 
-    return '<section class="card stat-row">' +
+    // Próximos vencimientos (resumen ordenado)
+    var proximos = cardCycles().filter(function (c) { return c.cycle; });
+    var proximosHtml = proximos.length ?
+      '<section class="card"><h2>Próximos vencimientos</h2>' +
+      proximos.map(function (c) {
+        var dias = c.cycle.daysToDue;
+        var cls = dias <= 5 ? 'danger' : (dias <= 10 ? 'warn' : 'ok');
+        var stmt = S.pendingStatement(c.debt.id);
+        return '<div class="row"><div class="row-main"><strong>' + esc(c.debt.name) + '</strong>' +
+          '<div class="row-sub">vence ' + F.fecha(c.cycle.due) +
+          (stmt ? ' · ' + F.pyg(stmt.totalDue) : ' · extracto sin registrar') + '</div></div>' +
+          '<span class="due-count ' + cls + '">' + dias + 'd</span></div>';
+      }).join('') + '</section>' : '';
+
+    return dueBanner() +
+      '<section class="card stat-row">' +
         '<div class="stat"><div class="stat-num">' + F.compact(totalDeuda) + '</div><div class="stat-lbl">deuda total</div></div>' +
         '<div class="stat"><div class="stat-num">' + F.gs(totalMin) + '</div><div class="stat-lbl">mínimos / mes</div></div>' +
-      '</section>' + cards;
+      '</section>' + proximosHtml + cards;
   }
 
   function bindDeudas() {
@@ -244,6 +308,35 @@
           if (t) t.done = true; S.save();
           render();
         }
+      });
+    });
+    [].forEach.call(app.querySelectorAll('[data-cycle]'), function (b) {
+      b.addEventListener('click', function () {
+        var d = S.state.debts.find(function (x) { return x.id === b.dataset.cycle; });
+        var cd = prompt('Día de CIERRE del extracto de ' + d.name + ' (1-28):', d.closeDay || '');
+        if (cd == null) return;
+        var dd = prompt('Día de VENCIMIENTO (del mes siguiente al cierre, 1-28):', d.dueDay || '');
+        if (dd == null) return;
+        var ci = parseInt(cd, 10), di = parseInt(dd, 10);
+        if (!(ci >= 1 && ci <= 28) || !(di >= 1 && di <= 28)) { alert('Días inválidos (1-28).'); return; }
+        S.updateDebtCycle(d.id, ci, di);
+        render();
+      });
+    });
+    [].forEach.call(app.querySelectorAll('[data-stmt]'), function (b) {
+      b.addEventListener('click', function () {
+        var d = S.state.debts.find(function (x) { return x.id === b.dataset.stmt; });
+        var cyc = Fin.nextCardDates(new Date(), d.closeDay, d.dueDay);
+        var total = prompt('Total a pagar del extracto de ' + d.name +
+          ' (vence ' + F.fecha(cyc.due) + ') en Gs:');
+        if (total == null) return;
+        S.addCardStatement({
+          debtId: d.id,
+          closeDate: cyc.close.toISOString().slice(0, 10),
+          dueDate: cyc.due.toISOString().slice(0, 10),
+          totalDue: F.parseGs(total)
+        });
+        render();
       });
     });
   }

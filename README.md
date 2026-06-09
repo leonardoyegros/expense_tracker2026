@@ -17,12 +17,19 @@ El patrón del usuario es **evitación bajo estrés**, no impulsividad. Por eso 
 
 ## Cómo correrlo
 
-No requiere build ni dependencias. Es HTML + CSS + JavaScript plano.
-
 ```bash
 npm start         # servidor Node en http://localhost:8080
 # o
 npm run serve     # alternativa con python3 -m http.server 8080
+```
+
+El CSS compilado (`css/styles.css`) está commiteado, así que no hace falta build para usar la
+app. Si tocás el diseño (`src/tailwind.css`):
+
+```bash
+npm install       # instala Tailwind CSS v4 (dev)
+npm run build:css # recompila css/styles.css
+npm run watch:css # recompila en caliente mientras diseñás
 ```
 
 También funciona abriendo `index.html` directamente en el navegador. Es una **PWA**: en el
@@ -44,8 +51,8 @@ npm test          # node --test
 
 | Pestaña | Qué hace |
 |---|---|
-| **Hoy** | Registro rápido de gasto: monto, categoría, medio de pago, flag viático + foto del comprobante, nota. Alerta de la *regla de oro* (usar tarjeta solo con efectivo de respaldo). |
-| **Deudas** | Saldos por deuda con barra de **utilización** y alerta a >80% (Itaú ~98%). Actualizar saldo, liquidar Sudameris. |
+| **Hoy** | Registro rápido de gasto: monto, categoría, medio de pago, flag viático + foto del comprobante, nota. Alerta de la *regla de oro* (usar tarjeta solo con efectivo de respaldo). Banner de vencimientos a ≤5 días. |
+| **Deudas** | Saldos por deuda con barra de **utilización** y alerta a >80% (Itaú ~98%). **Ciclos de tarjeta**: próximo cierre y vencimiento con contador de días, registro del extracto (total a pagar) y panel "Próximos vencimientos". Actualizar saldo, liquidar Sudameris. |
 | **Plan** | Proyección **bola de nieve** con *roll-over* automático de mínimos, fechas de cancelación, interés total y tabla mes a mes. Compara el abono con el **abono sostenible**. |
 | **Viáticos** | Pendientes con contador de "días sin rendir" e **interés perdido estimado**, alerta a los 7 días, reembolso con destino sugerido: pago directo a la tarjeta. |
 | **Mes** | Abono **sostenible** con desglose, variables por categoría vs presupuesto, "costo de deber", flujo del mes. |
@@ -61,23 +68,34 @@ npm test          # node --test
    alerta a 7 días, reembolso al destino correcto (tarjeta, no caja de ahorro).
 4. **Costo de deber** — categoría propia (interés + seguros + cuotas), ~1 M/mes.
 5. **Utilización** — alerta a >80% del límite.
-6. **Abono sostenible** — `ingresos − fijos − mínimos − ahorro − variables`; distingue mes normal
+6. **Ciclos de tarjeta** — fecha de cierre y vencimiento por tarjeta (el vencimiento cae en el
+   mes siguiente al cierre; Itaú: cierra ~17, vence ~5). Contador de días, registro del extracto
+   y recordatorio con alerta a ≤5 días del vencimiento.
+7. **Abono sostenible** — `ingresos − fijos − mínimos − ahorro − variables`; distingue mes normal
    vs mes con bono. No promete 3 M si el flujo no lo banca.
-7. **Auto último** a propósito (7% << 19,7–19,8%).
+8. **Auto último** a propósito (7% << 19,7–19,8%).
 
 ## Estructura
 
 ```
 index.html              # shell + carga de scripts
-css/styles.css          # estilos mobile-first (claro/oscuro)
+src/tailwind.css        # fuente del diseño (Tailwind v4, neón glass)
+css/styles.css          # CSS compilado (commiteado, no editar a mano)
 js/format.js            # formato PYG y fechas (UMD: navegador + Node)
-js/finance.js           # motor: snowball, sostenible, viáticos (UMD)
+js/finance.js           # motor: snowball, sostenible, viáticos, ciclos (UMD)
 js/data.js              # datos semilla reales jun-2026 (UMD)
 js/store.js             # estado + persistencia localStorage
 js/app.js               # interfaz por pestañas
 test/finance.test.js    # pruebas del motor
 server.js               # servidor estático sin dependencias
 ```
+
+## Diseño
+
+Neón tecnológico con **glassmorphism estilo iOS**: fondo oscuro con malla de gradientes radiales
+(cian/violeta/rosa), tarjetas translúcidas con `backdrop-blur` y borde luminoso, números con glow
+cian, barra de navegación inferior tipo píldora flotante. Construido con **Tailwind CSS v4**
+(config CSS-first en `src/tailwind.css`, tokens en `@theme`, componentes con `@apply`).
 
 ## Datos semilla
 
@@ -87,6 +105,6 @@ como "a actualizar" (el extracto de 58,7 M ya fue parcialmente pagado).
 
 ## Roadmap
 
-- **Fase 2**: ciclos de tarjeta (cierre/vencimiento) con recordatorios, comparación plan vs real.
+- **Fase 2** (restante): comparación plan vs real.
 - **Fase 3**: import de extractos Itaú (PY), escenarios ("rescatar ahorro programado"), gráficos
   de evolución, sync con Google Sheets.

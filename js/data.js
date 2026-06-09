@@ -20,15 +20,21 @@
     // --- Deudas (orden bola de nieve) ---
     debts: [
       { id: 'sudameris', name: 'Mastercard Sudameris', kind: 'credit_card', rateTAN: 0.1972,
-        balance: 611000, minPayment: 611000, snowballOrder: 1, projectedPayoffDate: '2026-07' },
+        balance: 611000, minPayment: 611000, snowballOrder: 1, projectedPayoffDate: '2026-07',
+        closeDay: null, dueDay: null },
       { id: 'ueno', name: 'Mastercard UENO', kind: 'credit_card', rateTAN: 0.1972,
-        balance: 24290258, minPayment: 1500000, snowballOrder: 2, projectedPayoffDate: '2026-12' },
+        balance: 24290258, minPayment: 1500000, snowballOrder: 2, projectedPayoffDate: '2026-12',
+        closeDay: null, dueDay: null },
       { id: 'itau', name: 'VISA Itaú', kind: 'credit_card', rateTAN: 0.1980,
         balance: 58729075, minPayment: 1170000, snowballOrder: 3, projectedPayoffDate: '2027-09',
-        creditLimit: 59900000, needsBalanceUpdate: true },
+        creditLimit: 59900000, needsBalanceUpdate: true,
+        closeDay: 17, dueDay: 5 },
       { id: 'auto', name: 'Préstamo Auto Cooperativa', kind: 'loan', rateTAN: 0.0700,
         balance: 111202696, minPayment: 3702977, snowballOrder: 4, projectedPayoffDate: '2028-04' }
     ],
+
+    // --- Extractos registrados por ciclo (CardCycle) ---
+    cardCycles: [],
 
     // --- Ingresos mensuales (regulares) y extraordinarios ---
     income: [

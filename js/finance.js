@@ -163,12 +163,49 @@
     return Math.round(ms / 86400000);
   }
 
+  /**
+   * Próximas fechas del ciclo de una tarjeta.
+   * El vencimiento de un cierre cae en el mes SIGUIENTE al cierre
+   * (Itaú: cierra ~17, vence ~5 del mes siguiente).
+   *
+   * @param {Date}   today
+   * @param {number} closeDay  día del mes en que cierra el extracto (1-28)
+   * @param {number} dueDay    día del mes siguiente en que vence
+   * @returns {null|{close:Date, due:Date, daysToClose:number, daysToDue:number}}
+   *   `due` es el vencimiento pendiente más próximo (puede ser del cierre ya pasado).
+   */
+  function nextCardDates(today, closeDay, dueDay) {
+    if (!closeDay || !dueDay) return null;
+    var t = new Date(today);
+    t.setHours(0, 0, 0, 0);
+
+    // Próximo cierre: este mes si todavía no pasó, si no el siguiente.
+    var close = new Date(t.getFullYear(), t.getMonth(), closeDay);
+    if (close < t) close = new Date(t.getFullYear(), t.getMonth() + 1, closeDay);
+
+    // Vencimiento pendiente: corresponde al último cierre ya ocurrido.
+    var lastClose = new Date(close.getFullYear(), close.getMonth() - 1, closeDay);
+    var due = new Date(lastClose.getFullYear(), lastClose.getMonth() + 1, dueDay);
+    if (due < t) {
+      // Ese vencimiento ya pasó: el siguiente es el del próximo cierre.
+      due = new Date(close.getFullYear(), close.getMonth() + 1, dueDay);
+    }
+
+    return {
+      close: close,
+      due: due,
+      daysToClose: daysBetween(close, t),
+      daysToDue: daysBetween(due, t)
+    };
+  }
+
   var api = {
     simulateSnowball: simulateSnowball,
     sustainableExtra: sustainableExtra,
     viaticoInterest: viaticoInterest,
     utilization: utilization,
     daysBetween: daysBetween,
+    nextCardDates: nextCardDates,
     etiquetaMes: etiquetaMes
   };
 
