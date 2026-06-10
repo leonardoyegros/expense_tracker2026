@@ -29,6 +29,10 @@ jobs:
 
       - name: Configurar Pages
         uses: actions/configure-pages@v5
+        with:
+          # Activa GitHub Pages (con GitHub Actions como source) si todavía
+          # no estaba habilitado, sin tener que tocar Settings -> Pages.
+          enablement: true
 
       # El sitio es estático y el CSS ya está compilado (css/styles.css),
       # así que se sube la raíz del repo tal cual.
