@@ -4,9 +4,9 @@
 @import "tailwindcss";
 
 @theme {
-  --color-neon-cyan: #22d3ee;
-  --color-neon-violet: #a78bfa;
-  --color-neon-pink: #f472b6;
+  --color-neon-cyan: #3b9bff;
+  --color-neon-violet: #7c8cf8;
+  --color-neon-pink: #38bdf8;
   --color-neon-green: #34d399;
   --color-neon-amber: #fbbf24;
   --color-neon-rose: #fb7185;
@@ -28,9 +28,9 @@
     line-height: 1.45;
     background-color: var(--color-abyss);
     background-image:
-      radial-gradient(60% 38% at 12% 0%, rgba(34, 211, 238, 0.16), transparent 62%),
-      radial-gradient(48% 34% at 100% 18%, rgba(167, 139, 250, 0.15), transparent 62%),
-      radial-gradient(50% 36% at 45% 102%, rgba(244, 114, 182, 0.10), transparent 62%);
+      radial-gradient(60% 38% at 12% 0%, rgba(59, 155, 255, 0.16), transparent 62%),
+      radial-gradient(48% 34% at 100% 18%, rgba(124, 140, 248, 0.15), transparent 62%),
+      radial-gradient(50% 36% at 45% 102%, rgba(56, 189, 248, 0.10), transparent 62%);
     background-attachment: fixed;
   }
 
@@ -68,11 +68,11 @@
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10), 0 10px 36px rgba(0, 0, 0, 0.40);
   }
   .card.highlight {
-    border-color: rgba(34, 211, 238, 0.45);
+    border-color: rgba(59, 155, 255, 0.45);
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.12),
-      0 0 0 1px rgba(34, 211, 238, 0.12),
-      0 0 28px rgba(34, 211, 238, 0.18),
+      0 0 0 1px rgba(59, 155, 255, 0.12),
+      0 0 28px rgba(59, 155, 255, 0.18),
       0 10px 36px rgba(0, 0, 0, 0.40);
   }
   .card h2 { @apply m-0 mb-3 text-[12.5px] font-bold uppercase tracking-[0.12em] text-neon-cyan/90; }
@@ -86,12 +86,12 @@
   .stat { @apply flex-1 text-center; }
   .stat-num {
     @apply text-[22px] font-extrabold tracking-tight text-[#eafdff];
-    text-shadow: 0 0 16px rgba(34, 211, 238, 0.45);
+    text-shadow: 0 0 16px rgba(59, 155, 255, 0.45);
   }
   .stat-lbl { @apply text-[10.5px] uppercase tracking-[0.08em] text-muted; }
   .big-num {
     @apply my-1 text-[28px] font-extrabold tracking-tight text-[#eafdff];
-    text-shadow: 0 0 20px rgba(34, 211, 238, 0.5);
+    text-shadow: 0 0 20px rgba(59, 155, 255, 0.5);
   }
   .big-num.neg {
     @apply text-neon-rose;
@@ -101,15 +101,15 @@
   /* --- Formularios --- */
   label { @apply mb-3 block text-[13px] text-muted; }
   label.check { @apply flex items-center gap-2.5 text-[14.5px] text-ink; }
-  label.check input { @apply m-0 h-[18px] w-[18px] accent-cyan-400; }
+  label.check input { @apply m-0 h-[18px] w-[18px] accent-blue-400; }
 
   input[type="text"], input[type="number"], select {
     @apply mt-1.5 w-full rounded-xl border border-white/10 bg-white/[0.05] px-3 py-[11px] text-base text-ink;
     backdrop-filter: blur(8px);
   }
   input[type="text"]:focus, input[type="number"]:focus, select:focus {
-    @apply outline-none border-cyan-400/60;
-    box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.15), 0 0 18px rgba(34, 211, 238, 0.20);
+    @apply outline-none border-blue-400/60;
+    box-shadow: 0 0 0 3px rgba(59, 155, 255, 0.15), 0 0 18px rgba(59, 155, 255, 0.20);
   }
   input::placeholder { color: rgba(139, 155, 180, 0.6); }
   select option { background: #0b1220; color: var(--color-ink); }
@@ -120,23 +120,23 @@
     @apply flex-1 cursor-pointer rounded-xl border border-white/10 bg-white/[0.04] py-2.5 text-sm text-muted;
   }
   .seg-btn.active {
-    @apply border-cyan-400/60 font-semibold text-[#031318];
-    background: linear-gradient(135deg, var(--color-neon-cyan), #67e8f9);
-    box-shadow: 0 0 16px rgba(34, 211, 238, 0.45);
+    @apply border-blue-400/60 font-semibold text-[#031318];
+    background: linear-gradient(135deg, var(--color-neon-cyan), #85b9ff);
+    box-shadow: 0 0 16px rgba(59, 155, 255, 0.45);
   }
 
   .btn-primary {
     @apply w-full cursor-pointer rounded-2xl border-0 py-[13px] text-base font-bold text-[#06121f];
     background: linear-gradient(110deg, var(--color-neon-cyan), var(--color-neon-violet));
-    box-shadow: 0 0 22px rgba(34, 211, 238, 0.35), 0 4px 18px rgba(167, 139, 250, 0.30);
+    box-shadow: 0 0 22px rgba(59, 155, 255, 0.35), 0 4px 18px rgba(124, 140, 248, 0.30);
   }
   .btn-primary:active { filter: brightness(0.85); }
 
   .btn-small {
-    @apply mt-2 inline-block w-auto cursor-pointer rounded-[10px] border border-cyan-400/30 bg-cyan-400/10 px-3 py-2 text-[13px] font-semibold text-neon-cyan;
+    @apply mt-2 inline-block w-auto cursor-pointer rounded-[10px] border border-blue-400/30 bg-blue-400/10 px-3 py-2 text-[13px] font-semibold text-neon-cyan;
   }
   .btn-primary.btn-small { @apply w-auto text-[#06121f]; }
-  .btn-small.glow { box-shadow: 0 0 14px rgba(34, 211, 238, 0.35); }
+  .btn-small.glow { box-shadow: 0 0 14px rgba(59, 155, 255, 0.35); }
   .danger-btn { @apply border-rose-400/30 bg-rose-400/10 text-neon-rose; }
 
   /* --- Alertas --- */
@@ -175,7 +175,7 @@
   .debt-head { @apply flex items-start justify-between gap-2.5; }
   .debt-bal {
     @apply whitespace-nowrap text-lg font-extrabold text-[#eafdff];
-    text-shadow: 0 0 14px rgba(34, 211, 238, 0.35);
+    text-shadow: 0 0 14px rgba(59, 155, 255, 0.35);
   }
   .debt-foot { @apply mt-2.5 flex items-center justify-between text-[13px] text-muted; }
   .debt-actions { @apply mt-1 flex flex-wrap gap-2; }
@@ -195,7 +195,7 @@
     box-shadow: 0 0 12px rgba(251, 113, 133, 0.30);
   }
   .chip-danger b { @apply text-neon-rose; }
-  .chip-cyan { @apply border-cyan-400/45 bg-cyan-400/10; }
+  .chip-cyan { @apply border-blue-400/45 bg-blue-400/10; }
 
   .due-count {
     @apply min-w-[44px] rounded-xl border px-2 py-1 text-center text-[14px] font-extrabold;
@@ -227,7 +227,7 @@
   .tbl th { @apply text-xs font-semibold uppercase tracking-[0.06em] text-muted; }
   .tbl td:nth-child(n+2), .tbl th:nth-child(n+2) { @apply text-right; }
   .tbl.small { @apply whitespace-nowrap text-xs; }
-  .tbl .total td { @apply border-b-0 border-t-2 border-t-cyan-400/50 font-extrabold; }
+  .tbl .total td { @apply border-b-0 border-t-2 border-t-blue-400/50 font-extrabold; }
   .tbl .ok { @apply font-bold text-neon-green; }
   .breakdown td:first-child { @apply text-muted; }
   .tbl-scroll { @apply overflow-x-auto; -webkit-overflow-scrolling: touch; }
@@ -255,6 +255,6 @@
     @apply flex flex-1 cursor-pointer flex-col items-center justify-center gap-0.5 border-0 bg-transparent py-1.5 text-[10px] text-muted;
   }
   .nav-btn .nav-icon { @apply text-[19px] leading-none; filter: grayscale(60%) opacity(70%); }
-  .nav-btn.active { @apply font-bold text-neon-cyan; text-shadow: 0 0 12px rgba(34, 211, 238, 0.6); }
+  .nav-btn.active { @apply font-bold text-neon-cyan; text-shadow: 0 0 12px rgba(59, 155, 255, 0.6); }
   .nav-btn.active .nav-icon { filter: none; }
 }
